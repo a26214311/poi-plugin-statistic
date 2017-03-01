@@ -5,7 +5,7 @@ import {createSelector} from 'reselect'
 import {store} from 'views/create-store'
 
 import {join} from 'path'
-import {FormGroup, FormControl, ListGroup, ListGroupItem, Button, Row, Col} from 'react-bootstrap'
+import {FormGroup, FormControl, ListGroup, ListGroupItem, Button, Row, Col, Table} from 'react-bootstrap'
 import FontAwesome from 'react-fontawesome'
 
 
@@ -208,22 +208,35 @@ export const reactClass = connect(
             </form>
           </Col>
         </Row>
-        <div>
+        <Table striped bordered condensed hover>
+          <thead>
+            <tr>
+              <th>位置</th>
+              <th>司令部lv</th>
+              <th>S</th>
+              <th>A</th>
+              <th>B</th>
+              <th>rate</th>
+            </tr>
+          </thead>
+          <tbody>
           {
             detailkeys.map(function(dropkey){
               const dropdata = detaildata[dropkey];
               return(
-                <div>
-                  {dropkey},lv:{dropdata.hqLv[0]}-{dropdata.hqLv[1]},
-                  S:{dropdata.rankCount[0]},
-                  A:{dropdata.rankCount[1]},
-                  B:{dropdata.rankCount[2]},
-                  rate:{dropdata.rate}
-                </div>
+                <tr>
+                  <td>{dropkey}</td>
+                  <td>{dropdata.hqLv[0]}-{dropdata.hqLv[1]}</td>
+                  <td>{dropdata.rankCount[0]}</td>
+                  <td>{dropdata.rankCount[1]}</td>
+                  <td>{dropdata.rankCount[2]}</td>
+                  <td>{dropdata.rate}</td>
+                </tr>
               )
             })
           }
-        </div>
+          </tbody>
+        </Table>
       </div>
     )
   }
