@@ -154,6 +154,7 @@ export const reactClass = connect(
   }
 
   get_statistic_info(shipid){
+    this.setState({detail:{}});
     var that=this;
     fetch('http://db.kcwiki.moe/drop/ship/'+shipid+'/SAB.json')
       .then(res => res.json())
@@ -230,7 +231,7 @@ export const reactClass = connect(
                   <td>{dropdata.rankCount[0]}</td>
                   <td>{dropdata.rankCount[1]}</td>
                   <td>{dropdata.rankCount[2]}</td>
-                  <td>{dropdata.rate}</td>
+                  <td>{dropdata.rate}%</td>
                 </tr>
               )
             })
