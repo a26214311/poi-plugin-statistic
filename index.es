@@ -216,8 +216,8 @@ export const reactClass = connect(
                 <div>
                   {dropkey},lv:{dropdata.hqLv[0]}-{dropdata.hqLv[1]},
                   S:{dropdata.rankCount[0]},
-                  A:{dropdata.rankCount[0]},
-                  B:{dropdata.rankCount[0]},
+                  A:{dropdata.rankCount[1]},
+                  B:{dropdata.rankCount[2]},
                   rate:{dropdata.rate}
                 </div>
               )
