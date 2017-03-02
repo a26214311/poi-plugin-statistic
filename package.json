@@ -8,9 +8,9 @@
     "url": "https://github.com/a26214311"
   },
   "poiPlugin": {
-    "title": "统计",
-    "description": "统计",
-    "icon": "fa/lock",
+    "title": "捞船统计",
+    "description": "poi捞船统计",
+    "icon": "fa/list",
     "i18nDir": "i18n/translator",
     "apiVer": {
       "6.3.3": "2.1.1",

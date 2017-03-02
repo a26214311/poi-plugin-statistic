@@ -5,7 +5,7 @@ import {createSelector} from 'reselect'
 import {store} from 'views/create-store'
 
 import {join} from 'path'
-import {FormGroup, FormControl, ListGroup, ListGroupItem, Button, Row, Col, Table} from 'react-bootstrap'
+import {FormGroup, FormControl, ListGroup, ListGroupItem, Button, Row, Col, Table, ButtonGroup} from 'react-bootstrap'
 import FontAwesome from 'react-fontawesome'
 
 
@@ -27,7 +27,9 @@ export const reactClass = connect(
       ship_targets: this.simplfyship(),
       show_shipList: false,
       input_shipList: '',
-      detail:{}
+      detail:{},
+      battle_rank: 'SAB',
+      searchShipId: ''
     }
   }
 
@@ -35,8 +37,8 @@ export const reactClass = connect(
   }
 
   handleFormChange(e) {
-    let value = e.currentTarget.value;
-    this.get_statistic_info(value);
+    this.setState({searchShipId: e.currentTarget.value});
+    this.get_statistic_info(e.currentTarget.value);
   }
 
   simplfyship() {
@@ -153,21 +155,29 @@ export const reactClass = connect(
     }
   }
 
-  get_statistic_info(shipid){
+  get_statistic_info(...value){
     this.setState({detail:{}});
     var that=this;
-    fetch('http://db.kcwiki.moe/drop/ship/'+shipid+'/SAB.json')
+    fetch('http://db.kcwiki.moe/drop/ship/'+ value[0] +'/'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json')
       .then(res => res.json())
       .then(function(response){
         that.setState({detail:response})
       });
   }
 
+  changeRank = e => {
+    this.setState({battle_rank: e.target.text});
+    if(this.state.searchShipId){
+      this.get_statistic_info(this.state.searchShipId, e.target.text)
+    }
+  };
+
 
 
   render_D() {
     const {$ships, horizontal} = this.props;
     const $shipTypes = this.props.$shipTypes;
+    const rankLevel = ['SAB', 'SA', 'S', 'A', 'B'];
     const createList = arr => {
       let out = [];
       arr.map((option) => {
@@ -194,8 +204,8 @@ export const reactClass = connect(
       detailkeys.sort(function(a,b){return detaildata[b].rate-detaildata[a].rate})
     }
     return (
-      <div id="notify" className="notify">
-        <link rel="stylesheet" href={join(__dirname, 'notify.css')}/>
+      <div id="statistic" className="statistic">
+        <link rel="stylesheet" href={join(__dirname, 'statistic.css')}/>
         <Row>
           <Col xs={12}>
             <form className="input-select">
@@ -210,14 +220,34 @@ export const reactClass = connect(
             </form>
           </Col>
         </Row>
+        <Row>
+          <Col xs={12}>
+            <ButtonGroup justified>
+              {
+                rankLevel.map((level) => {
+                  return(
+                    <Button
+                      onClick={this.changeRank}
+                      href="javascript:;"
+                      bsStyle={this.state.battle_rank == level? 'info': 'default'}
+                    >
+                      {level}
+                    </Button>
+                  )
+                })
+              }
+            </ButtonGroup>
+          </Col>
+        </Row>
         <Table striped bordered condensed hover>
           <thead>
             <tr>
               <th>位置</th>
-              <th>司令部lv</th>
-              <th>S</th>
-              <th>A</th>
-              <th>B</th>
+              {
+                this.state.battle_rank.split('').map(
+                  rank => <th>{rank}</th>
+                )
+              }
               <th>rate</th>
             </tr>
           </thead>
@@ -228,10 +258,7 @@ export const reactClass = connect(
               return(
                 <tr>
                   <td>{dropkey}</td>
-                  <td>{dropdata.hqLv[0]}-{dropdata.hqLv[1]}</td>
-                  <td>{dropdata.rankCount[0]}</td>
-                  <td>{dropdata.rankCount[1]}</td>
-                  <td>{dropdata.rankCount[2]}</td>
+                    {dropdata.rankCount? dropdata.rankCount.map(rank => <td>{rank}</td>) : <td>{dropdata.totalCount}</td>}
                   <td>{dropdata.rate}%</td>
                 </tr>
               )
