@@ -29,7 +29,8 @@ export const reactClass = connect(
       input_shipList: '',
       detail:{},
       battle_rank: 'SAB',
-      searchShipId: ''
+      searchShipId: '',
+      sortFlag: 'rate'
     }
   }
 
@@ -191,6 +192,11 @@ export const reactClass = connect(
     }
   };
 
+  sortList = e =>{
+    this.setState({sortFlag: e.target.getAttribute('value')})
+
+  }
+
 
 
   render_D() {
@@ -216,11 +222,25 @@ export const reactClass = connect(
     };
 
     const detaildata = this.state.detail.data;
-    console.log(detaildata);
     var detailkeys=[]
     if(detaildata){
       detailkeys = Object.keys(detaildata);
-      detailkeys.sort(function(a,b){return detaildata[b].rate-detaildata[a].rate})
+      const sortFlag = this.state.sortFlag;
+      switch(sortFlag) {
+        case 'name':
+          detailkeys.sort(); break;
+        case 'rate':
+          detailkeys.sort((a, b) => detaildata[b].rate - detaildata[a].rate); break;
+        default:
+          if(!!detaildata[detailkeys[0]].rankCount){
+            detailkeys.sort((a, b) => {
+              return detaildata[b].rankCount[sortFlag] - detaildata[a].rankCount[sortFlag]
+            })
+          } else {
+            detailkeys.sort((a, b) => detaildata[b].totalCount - detaildata[a].totalCount);
+          }
+          break;
+      }
     }
     return (
       <div id="statistic" className="statistic">
@@ -261,13 +281,13 @@ export const reactClass = connect(
         <Table striped bordered condensed hover>
           <thead>
             <tr>
-              <th>位置</th>
+              <th onClick={this.sortList} value="name">位置</th>
               {
                 this.state.battle_rank.split('').map(
-                  rank => <th>{rank}</th>
+                  (rank, index) => <th onClick={this.sortList} value={index}>{rank}</th>
                 )
               }
-              <th>rate</th>
+              <th onClick={this.sortList} value="rate">rate</th>
             </tr>
           </thead>
           <tbody>
