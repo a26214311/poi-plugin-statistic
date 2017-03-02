@@ -5,7 +5,7 @@ import {createSelector} from 'reselect'
 import {store} from 'views/create-store'
 
 import {join} from 'path'
-import {FormGroup, FormControl, ListGroup, ListGroupItem, Button, Row, Col, Table} from 'react-bootstrap'
+import {FormGroup, FormControl, ListGroup, ListGroupItem, Button, Row, Col, Table, ButtonGroup} from 'react-bootstrap'
 import FontAwesome from 'react-fontawesome'
 
 
@@ -27,7 +27,9 @@ export const reactClass = connect(
       ship_targets: this.simplfyship(),
       show_shipList: false,
       input_shipList: '',
-      detail:{}
+      detail:{},
+      battle_judge: 'SAB',
+      searchShipId: ''
     }
   }
 
@@ -35,8 +37,8 @@ export const reactClass = connect(
   }
 
   handleFormChange(e) {
-    let value = e.currentTarget.value;
-    this.get_statistic_info(value);
+    this.setState({searchShipId: e.currentTarget.value});
+    this.get_statistic_info(e.currentTarget.value);
   }
 
   simplfyship() {
@@ -153,21 +155,35 @@ export const reactClass = connect(
     }
   }
 
-  get_statistic_info(shipid){
+  get_statistic_info(...value){
+    console.log(value);
+    console.log(this.state.searchShipId);
+    console.log(this.state.battle_judge)
+    console.log('http://db.kcwiki.moe/drop/ship/'+ value[0] +'/'+ (value.length - 1? value[1]: this.state.battle_judge) +'.json')
     this.setState({detail:{}});
     var that=this;
-    fetch('http://db.kcwiki.moe/drop/ship/'+shipid+'/SAB.json')
+    fetch('http://db.kcwiki.moe/drop/ship/'+ value[0] +'/'+ (value.length - 1? value[1]: this.state.battle_judge) +'.json')
       .then(res => res.json())
       .then(function(response){
         that.setState({detail:response})
       });
   }
 
+  changeJudge = e => {
+    e.preventDefault();
+    e.stopPropagation();
+    this.setState({battle_judge: e.target.text});
+    if(this.state.searchShipId){
+      this.get_statistic_info(this.state.searchShipId, e.target.text)
+    }
+  };
+
 
 
   render_D() {
     const {$ships, horizontal} = this.props;
     const $shipTypes = this.props.$shipTypes;
+    const judgeLevel = ['SAB', 'SA', 'S', 'A', 'B'];
     const createList = arr => {
       let out = [];
       arr.map((option) => {
@@ -193,8 +209,8 @@ export const reactClass = connect(
       detailkeys = Object.keys(detaildata);
     }
     return (
-      <div id="notify" className="notify">
-        <link rel="stylesheet" href={join(__dirname, 'notify.css')}/>
+      <div id="statistic" className="statistic">
+        <link rel="stylesheet" href={join(__dirname, 'statistic.css')}/>
         <Row>
           <Col xs={12}>
             <form className="input-select">
@@ -209,11 +225,29 @@ export const reactClass = connect(
             </form>
           </Col>
         </Row>
+        <Row>
+          <Col xs={12}>
+            <ButtonGroup justified>
+              {
+                judgeLevel.map((level) => {
+                  return(
+                    <Button
+                      onClick={this.changeJudge}
+                      href="javascript:;"
+                      bsStyle={this.state.battle_judge == level? 'success': 'danger'}
+                    >
+                      {level}
+                    </Button>
+                  )
+                })
+              }
+            </ButtonGroup>
+          </Col>
+        </Row>
         <Table striped bordered condensed hover>
           <thead>
             <tr>
               <th>位置</th>
-              <th>司令部lv</th>
               <th>S</th>
               <th>A</th>
               <th>B</th>
@@ -227,7 +261,6 @@ export const reactClass = connect(
               return(
                 <tr>
                   <td>{dropkey}</td>
-                  <td>{dropdata.hqLv[0]}-{dropdata.hqLv[1]}</td>
                   <td>{dropdata.rankCount[0]}</td>
                   <td>{dropdata.rankCount[1]}</td>
                   <td>{dropdata.rankCount[2]}</td>
