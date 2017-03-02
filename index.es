@@ -288,20 +288,20 @@ export const reactClass = connect(
             <tr>
               <th onClick={this.sortList} value="name">
                 位置&nbsp;&nbsp;
-                {this.state.sortFlag == 'name' ? <FontAwesome name="sort-amount-desc" /> : ''}
+                {this.state.sortFlag == 'name' ? <FontAwesome name="sort-amount-desc" onClick={e => {e.stopPropagation()}}/> : ''}
               </th>
               {
                 this.state.battle_rank.split('').map(
                   (rank, index) =>
                     <th onClick={this.sortList} value={index}>
                       {rank}&nbsp;&nbsp;
-                      {this.state.sortFlag == index ? <FontAwesome name="sort-amount-desc" /> : ''}
+                      {this.state.sortFlag == index ? <FontAwesome name="sort-amount-desc" onClick={e => {e.stopPropagation()}}/> : ''}
                     </th>
                 )
               }
               <th onClick={this.sortList} value="rate">
                 rate&nbsp;&nbsp;
-                {this.state.sortFlag == 'rate' ? <FontAwesome name="sort-amount-desc" /> : ''}
+                {this.state.sortFlag == 'rate' ? <FontAwesome name="sort-amount-desc" onClick={e => {e.stopPropagation()}}/> : ''}
               </th>
             </tr>
           </thead>
