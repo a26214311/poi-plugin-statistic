@@ -28,7 +28,7 @@ export const reactClass = connect(
       show_shipList: false,
       input_shipList: '',
       detail:{},
-      battle_judge: 'SAB',
+      battle_rank: 'SAB',
       searchShipId: ''
     }
   }
@@ -158,21 +158,21 @@ export const reactClass = connect(
   get_statistic_info(...value){
     console.log(value);
     console.log(this.state.searchShipId);
-    console.log(this.state.battle_judge)
-    console.log('http://db.kcwiki.moe/drop/ship/'+ value[0] +'/'+ (value.length - 1? value[1]: this.state.battle_judge) +'.json')
+    console.log(this.state.battle_rank)
+    console.log('http://db.kcwiki.moe/drop/ship/'+ value[0] +'/'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json')
     this.setState({detail:{}});
     var that=this;
-    fetch('http://db.kcwiki.moe/drop/ship/'+ value[0] +'/'+ (value.length - 1? value[1]: this.state.battle_judge) +'.json')
+    fetch('http://db.kcwiki.moe/drop/ship/'+ value[0] +'/'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json')
       .then(res => res.json())
       .then(function(response){
         that.setState({detail:response})
       });
   }
 
-  changeJudge = e => {
+  changeRank = e => {
     e.preventDefault();
     e.stopPropagation();
-    this.setState({battle_judge: e.target.text});
+    this.setState({battle_rank: e.target.text});
     if(this.state.searchShipId){
       this.get_statistic_info(this.state.searchShipId, e.target.text)
     }
@@ -183,7 +183,7 @@ export const reactClass = connect(
   render_D() {
     const {$ships, horizontal} = this.props;
     const $shipTypes = this.props.$shipTypes;
-    const judgeLevel = ['SAB', 'SA', 'S', 'A', 'B'];
+    const rankLevel = ['SAB', 'SA', 'S', 'A', 'B'];
     const createList = arr => {
       let out = [];
       arr.map((option) => {
@@ -229,12 +229,12 @@ export const reactClass = connect(
           <Col xs={12}>
             <ButtonGroup justified>
               {
-                judgeLevel.map((level) => {
+                rankLevel.map((level) => {
                   return(
                     <Button
-                      onClick={this.changeJudge}
+                      onClick={this.changeRank}
                       href="javascript:;"
-                      bsStyle={this.state.battle_judge == level? 'success': 'danger'}
+                      bsStyle={this.state.battle_rank == level? 'success': 'danger'}
                     >
                       {level}
                     </Button>
@@ -248,9 +248,11 @@ export const reactClass = connect(
           <thead>
             <tr>
               <th>位置</th>
-              <th>S</th>
-              <th>A</th>
-              <th>B</th>
+              {
+                this.state.battle_rank.split('').map(
+                  rank => <th>{rank}</th>
+                )
+              }
               <th>rate</th>
             </tr>
           </thead>
@@ -261,9 +263,13 @@ export const reactClass = connect(
               return(
                 <tr>
                   <td>{dropkey}</td>
-                  <td>{dropdata.rankCount[0]}</td>
-                  <td>{dropdata.rankCount[1]}</td>
-                  <td>{dropdata.rankCount[2]}</td>
+                  {
+                    dropdata.rankCount? dropdata.rankCount.map(rank => {
+                      return(
+                        <td>{rank}</td>
+                      )
+                    }) : <td>{dropdata.totalCount}</td>
+                  }
                   <td>{dropdata.rate}%</td>
                 </tr>
               )
