@@ -11,7 +11,7 @@ import FontAwesome from 'react-fontawesome'
 
 import {extensionSelectorFactory} from 'views/utils/selectors'
 const fs = require('fs')
-const zh = "阿八嚓哒妸发旮哈或讥咔垃痳拏噢妑七呥撒它拖脱穵夕丫帀坐".split('');
+const zh = "阿八嚓哒妸发旮哈或讥咔垃麻拏噢妑七呥撒它拖脱穵夕丫帀坐".split('');
 export const reactClass = connect(
   state => ({
     horizontal: state.config.poi.layout || 'horizontal',
@@ -254,7 +254,7 @@ export const reactClass = connect(
           <Col xs={12}>
             <form className="input-select">
               <FormGroup>
-                <FormControl type="text" placeholder="选择或输入要提醒的舰船" ref="shipInput" value={this.state.input_shipList}
+                <FormControl type="text" placeholder="请选择" ref="shipInput" value={this.state.input_shipList}
                              onChange={this.changeHandler} onFocus={this.showShipList}
                              onBlur={this.hiddenShipList}/>
               </FormGroup>
