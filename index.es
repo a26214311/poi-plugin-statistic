@@ -186,6 +186,8 @@ export const reactClass = connect(
   }
 
   changeRank = e => {
+    e.preventDefault();
+    e.stopPropagation();
     this.setState({battle_rank: e.target.text});
     if(this.state.searchShipId){
       this.get_statistic_info(this.state.searchShipId, e.target.text)
@@ -193,8 +195,9 @@ export const reactClass = connect(
   };
 
   sortList = e =>{
+    e.preventDefault();
+    e.stopPropagation();
     this.setState({sortFlag: e.target.getAttribute('value')})
-
   }
 
 
@@ -233,9 +236,7 @@ export const reactClass = connect(
           detailkeys.sort((a, b) => detaildata[b].rate - detaildata[a].rate); break;
         default:
           if(!!detaildata[detailkeys[0]].rankCount){
-            detailkeys.sort((a, b) => {
-              return detaildata[b].rankCount[sortFlag] - detaildata[a].rankCount[sortFlag]
-            })
+            detailkeys.sort((a, b) => detaildata[b].rankCount[sortFlag] - detaildata[a].rankCount[sortFlag])
           } else {
             detailkeys.sort((a, b) => detaildata[b].totalCount - detaildata[a].totalCount);
           }
