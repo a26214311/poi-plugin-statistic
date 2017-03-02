@@ -11,7 +11,7 @@ import FontAwesome from 'react-fontawesome'
 
 import {extensionSelectorFactory} from 'views/utils/selectors'
 const fs = require('fs')
-const http = require('http')
+const zh = "阿八嚓哒妸发旮哈或讥咔垃痳拏噢妑七呥撒它拖脱穵夕丫帀坐".split('');
 export const reactClass = connect(
   state => ({
     horizontal: state.config.poi.layout || 'horizontal',
@@ -113,7 +113,26 @@ export const reactClass = connect(
     if (other.length == 1 && other[0]) {
       expStr = ''
     }
+    let lowstr = expStr.toLowerCase();
     this.simplfyship().map((id) => {
+      var shipname = $ship[id].api_name;
+      if(lowstr>='a'&&lowstr<='z'){
+        var match=true;
+        for(var i=0;i<lowstr.length;i++){
+          var x=lowstr.charCodeAt(i)-97;
+          var cs=zh[x];
+          var ce=zh[x+1];
+          if(shipname.charAt(i).localeCompare(cs)>0&&shipname.charAt(i).localeCompare(ce)<0){
+
+          }else{
+            match=false;
+            break;
+          }
+        }
+        if(match){
+          allship.push(id);
+        }
+      }
       if (new RegExp(expStr, 'i').test($ship[id].api_name))
         allship.push(id);
     });
