@@ -192,6 +192,10 @@ export const reactClass = connect(
     if(this.state.searchShipId){
       this.get_statistic_info(this.state.searchShipId, e.target.text)
     }
+    const sortFlag = this.state.sortFlag;
+    if(sortFlag != 'rate' && sortFlag != 'name' && e.target.text.length - 1 < sortFlag){
+      this.setState({sortFlag: 'rate'})
+    }
   };
 
   sortList = e =>{
@@ -282,13 +286,23 @@ export const reactClass = connect(
         <Table striped bordered condensed hover>
           <thead>
             <tr>
-              <th onClick={this.sortList} value="name">位置</th>
+              <th onClick={this.sortList} value="name">
+                位置&nbsp;&nbsp;
+                {this.state.sortFlag == 'name' ? <FontAwesome name="sort-amount-desc" /> : ''}
+              </th>
               {
                 this.state.battle_rank.split('').map(
-                  (rank, index) => <th onClick={this.sortList} value={index}>{rank}</th>
+                  (rank, index) =>
+                    <th onClick={this.sortList} value={index}>
+                      {rank}&nbsp;&nbsp;
+                      {this.state.sortFlag == index ? <FontAwesome name="sort-amount-desc" /> : ''}
+                    </th>
                 )
               }
-              <th onClick={this.sortList} value="rate">rate</th>
+              <th onClick={this.sortList} value="rate">
+                rate&nbsp;&nbsp;
+                {this.state.sortFlag == 'rate' ? <FontAwesome name="sort-amount-desc" /> : ''}
+              </th>
             </tr>
           </thead>
           <tbody>
