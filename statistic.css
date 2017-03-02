@@ -34,6 +34,7 @@
 	z-index: 999;
 	margin-top: 10px;
 }
+
 #statistic .input-select .form-group {
 	position: absolute;
 	width: 100%;
@@ -52,7 +53,11 @@
 	border-radius: 4px;
 }
 
-#statistic .input-select .ship-list li{
+#statistic .input-select .ship-list li {
 	font-size: 14px;
 	line-height: 16px;
+}
+
+#statistic th {
+	cursor: pointer;
 }
