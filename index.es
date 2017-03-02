@@ -156,10 +156,6 @@ export const reactClass = connect(
   }
 
   get_statistic_info(...value){
-    console.log(value);
-    console.log(this.state.searchShipId);
-    console.log(this.state.battle_rank)
-    console.log('http://db.kcwiki.moe/drop/ship/'+ value[0] +'/'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json')
     this.setState({detail:{}});
     var that=this;
     fetch('http://db.kcwiki.moe/drop/ship/'+ value[0] +'/'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json')
@@ -170,8 +166,6 @@ export const reactClass = connect(
   }
 
   changeRank = e => {
-    e.preventDefault();
-    e.stopPropagation();
     this.setState({battle_rank: e.target.text});
     if(this.state.searchShipId){
       this.get_statistic_info(this.state.searchShipId, e.target.text)
@@ -234,7 +228,7 @@ export const reactClass = connect(
                     <Button
                       onClick={this.changeRank}
                       href="javascript:;"
-                      bsStyle={this.state.battle_rank == level? 'success': 'danger'}
+                      bsStyle={this.state.battle_rank == level? 'info': 'default'}
                     >
                       {level}
                     </Button>
@@ -263,13 +257,7 @@ export const reactClass = connect(
               return(
                 <tr>
                   <td>{dropkey}</td>
-                  {
-                    dropdata.rankCount? dropdata.rankCount.map(rank => {
-                      return(
-                        <td>{rank}</td>
-                      )
-                    }) : <td>{dropdata.totalCount}</td>
-                  }
+                    {dropdata.rankCount? dropdata.rankCount.map(rank => <td>{rank}</td>) : <td>{dropdata.totalCount}</td>}
                   <td>{dropdata.rate}%</td>
                 </tr>
               )
