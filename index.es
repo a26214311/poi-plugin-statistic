@@ -186,6 +186,8 @@ export const reactClass = connect(
   }
 
   changeRank = e => {
+    e.preventDefault();
+    e.stopPropagation();
     this.setState({battle_rank: e.target.text});
     if(this.state.searchShipId){
       this.get_statistic_info(this.state.searchShipId, e.target.text)
@@ -193,8 +195,9 @@ export const reactClass = connect(
   };
 
   sortList = e =>{
+    e.preventDefault();
+    e.stopPropagation();
     this.setState({sortFlag: e.target.getAttribute('value')})
-
   }
 
 
