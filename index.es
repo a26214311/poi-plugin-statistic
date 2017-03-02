@@ -236,9 +236,7 @@ export const reactClass = connect(
           detailkeys.sort((a, b) => detaildata[b].rate - detaildata[a].rate); break;
         default:
           if(!!detaildata[detailkeys[0]].rankCount){
-            detailkeys.sort((a, b) => {
-              return detaildata[b].rankCount[sortFlag] - detaildata[a].rankCount[sortFlag]
-            })
+            detailkeys.sort((a, b) => detaildata[b].rankCount[sortFlag] - detaildata[a].rankCount[sortFlag])
           } else {
             detailkeys.sort((a, b) => detaildata[b].totalCount - detaildata[a].totalCount);
           }
