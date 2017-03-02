@@ -268,17 +268,14 @@ export const reactClass = connect(
           <Col xs={12}>
             <ButtonGroup justified>
               {
-                rankLevel.map((level) => {
-                  return(
+                rankLevel.map(level =>
                     <Button
                       onClick={this.changeRank}
                       href="javascript:;"
                       bsStyle={this.state.battle_rank == level? 'info': 'default'}
                     >
                       {level}
-                    </Button>
-                  )
-                })
+                    </Button>)
               }
             </ButtonGroup>
           </Col>
