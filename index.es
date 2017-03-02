@@ -191,6 +191,7 @@ export const reactClass = connect(
     var detailkeys=[]
     if(detaildata){
       detailkeys = Object.keys(detaildata);
+      detailkeys.sort(function(a,b){return detaildata[b].rate-detaildata[a].rate})
     }
     return (
       <div id="notify" className="notify">
