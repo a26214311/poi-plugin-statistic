@@ -54,7 +54,6 @@ export const reactClass = connect(
       var ships=this.simplfyship_D();
       var maps = [];
       var list = maps.concat(ships);
-      console.log(list);
       return list;
     } catch (e) {
       console.log(e);
@@ -208,7 +207,6 @@ export const reactClass = connect(
   get_statistic_info_by_map(...value){
     this.setState({detail:{}});
     const _this = this;
-    console.log(value);
     fetch('http://db.kcwiki.moe/drop/map/'+ value[0] +'-'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json')
       .then(res => res.json())
       .then(function(response){
