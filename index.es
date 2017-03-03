@@ -16,7 +16,8 @@ export const reactClass = connect(
   state => ({
     horizontal: state.config.poi.layout || 'horizontal',
     $ships: state.const.$ships,
-    $shipTypes: state.const.$shipTypes
+    $shipTypes: state.const.$shipTypes,
+    allmaps:state.fcd.map
   }),
   null, null, {pure: false}
 )(class PluginStatistic extends Component {
@@ -30,7 +31,8 @@ export const reactClass = connect(
       detail:{},
       battle_rank: 'SAB',
       searchShipId: '',
-      sortFlag: 'rate'
+      sortFlag: 'rate',
+      nowmap:undefined,
     }
   }
 
@@ -149,6 +151,19 @@ export const reactClass = connect(
     this.handleFormChange(e);
   };
 
+
+  selectMap = e => {
+    e.stopPropagation();
+    let option = e.currentTarget.value;
+    this.setState({nowmap:option})
+  };
+
+  selectPoint = e => {
+    e.stopPropagation();
+    let option = e.currentTarget.value;
+    this.get_statistic_info_by_map(option);
+  }
+
   handleNewShip = e => {
     e.preventDefault();
     e.stopPropagation();
@@ -174,6 +189,27 @@ export const reactClass = connect(
       )
     }
   }
+
+  get_statistic_info_by_map(value){
+    this.setState({detail:{}});
+    var that=this;
+    console.log(value);
+    var map=value[0];
+    var point=value[1];
+    var level = value[2];
+    var fetchurl = 'http://db.kcwiki.moe/drop/map/';
+    console.log(fetchurl);
+    fetchurl=fetchurl+map.split('-').join('')+'/';
+    console.log(fetchurl);
+    fetchurl=fetchurl+ level?(level+'/'):'' + point + '-' + 'SAB.json';
+    console.log(fetchurl);
+    fetch(fetchurl)
+      .then(res => res.json())
+      .then(function(response){
+        that.setState({detail:response})
+      });
+  }
+
 
   get_statistic_info(...value){
     this.setState({detail:{}});
@@ -210,6 +246,9 @@ export const reactClass = connect(
     const {$ships, horizontal} = this.props;
     const $shipTypes = this.props.$shipTypes;
     const rankLevel = ['SAB', 'SA', 'S', 'A', 'B'];
+    const allmaps = this.props.allmaps;
+    const selectedmap = this.state.nowmap;
+    const mapdetail = selectedmap?allmaps[selectedmap]:{spots:{}};
     const createList = arr => {
       let out = [];
       arr.map((option) => {
@@ -317,6 +356,38 @@ export const reactClass = connect(
           }
           </tbody>
         </Table>
+        <div>
+          <FormControl componentClass="select" onChange={this.selectMap}>
+            <option value={selectedmap}>{selectedmap}</option>
+            {Object.keys(allmaps).map(function(amap){
+              return(
+                    <option value={amap}>{amap}</option>
+              )
+            })}
+          </FormControl>
+          <FormControl componentClass="select" onChange={this.selectPoint}>
+          {
+            Object.keys(mapdetail.spots).sort().map(function(point){
+              if(point=="1"||point=="2"||point=="3"){
+
+              }else if(parseInt(selectedmap)>10){
+                var hardlevel = ["甲","乙","丙"];
+                return hardlevel.map(function(level,index){
+                  var value=[selectedmap,point,3-index];
+                  return(
+                    <option value={value}>{point}({level})</option>
+                  )
+                })
+              }else{
+                var value=[selectedmap,point];
+                return(
+                  <option value={value}>{point}</option>
+                )
+              }
+            })
+          }
+          </FormControl>
+        </div>
       </div>
     )
   }
