@@ -223,18 +223,16 @@ export const reactClass = connect(
     }
   }
 
-  get_statistic_info_by_map(value){
+  get_statistic_info_by_map(valueStr){
     this.setState({detail:{}});
     var that=this;
-    console.log(value);
+    var value = valueStr.split(",");
     var map=value[0];
     var point=value[1];
     var level = value[2];
     var fetchurl = 'http://db.kcwiki.moe/drop/map/';
-    console.log(fetchurl);
     fetchurl=fetchurl+map.split('-').join('')+'/';
-    console.log(fetchurl);
-    fetchurl=fetchurl+ level?(level+'/'):'' + point + '-' + 'SAB.json';
+    fetchurl=fetchurl+ (level?(level+'/'):'') + point + '-' + 'SAB.json';
     console.log(fetchurl);
     fetch(fetchurl)
       .then(res => res.json())
