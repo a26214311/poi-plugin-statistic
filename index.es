@@ -49,31 +49,6 @@ export const reactClass = connect(
     this.get_statistic_info(e.currentTarget.value);
   }
 
-  maplist(){
-    var allmaps = this.props.allmaps;
-    var list = [];
-    for(var p in allmaps){
-      if(parseInt(p)<10){
-        var mapdetail = allmaps[p].spots;
-        for(var point in mapdetail){
-          if(point!="1"){
-            list.push(p+":"+point);
-          }
-        }
-      }else{
-        var mapdetail = allmaps[p].spots;
-        for(var point in mapdetail){
-          if(point!="1"){
-            list.push(p+":"+point+"(甲)");
-            list.push(p+":"+point+"(乙)");
-            list.push(p+":"+point+"(丙)");
-          }
-        }
-      }
-    }
-    return list;
-  }
-
   simplfyship() {
     try {
       var ships=this.simplfyship_D();
@@ -217,19 +192,6 @@ export const reactClass = connect(
     }
   }
 
-  handleNewShip = e => {
-    e.preventDefault();
-    e.stopPropagation();
-    let nl = this.state.notify_list;
-    if (nl.newShip != 'undefined') {
-      nl.newShip = !nl.newShip;
-    } else {
-      nl.newShip = true
-    }
-    this.savelist();
-    this.setState({notify_list: nl})
-  };
-
   render() {
     try {
       return this.render_D();
@@ -294,7 +256,7 @@ export const reactClass = connect(
 
 
   render_D() {
-    const {$ships, horizontal} = this.props;
+    const { $ships } = this.props;
     const $shipTypes = this.props.$shipTypes;
     const rankLevel = ['SAB', 'SA', 'S', 'A', 'B'];
     const allmaps = this.props.allmaps;
@@ -459,31 +421,3 @@ export const reactClass = connect(
     )
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
