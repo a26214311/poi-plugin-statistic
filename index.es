@@ -17,7 +17,7 @@ export const reactClass = connect(
     horizontal: state.config.poi.layout || 'horizontal',
     $ships: state.const.$ships,
     $shipTypes: state.const.$shipTypes,
-    allmaps:state.fcd.map
+    allmaps:state.fcd?state.fcd.map:{}
   }),
   null, null, {pure: false}
 )(class PluginStatistic extends Component {
