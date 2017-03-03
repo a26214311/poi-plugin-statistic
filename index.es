@@ -208,7 +208,7 @@ export const reactClass = connect(
     if(e.currentTarget.value != '0'){
       let option = e.currentTarget.value;
       let sp = option.split(','), map = sp[0], point = sp[1], level = sp[2],
-        uri = `${map.replace(/\-/g, '')}/${level + level ? '/' : ''}${point}`;
+        uri = `${map.replace(/\-/g, '')}/${level ? level + '/' : ''}${point}`;
       this.setState({
         searchMapPoint: uri,
         searchType: 'map'
