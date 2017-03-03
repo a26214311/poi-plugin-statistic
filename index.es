@@ -30,9 +30,11 @@ export const reactClass = connect(
       input_shipList: '',
       detail:{},
       battle_rank: 'SAB',
-      searchShipId: '',
       sortFlag: 'rate',
       nowmap:undefined,
+      searchShipId: '',
+      searchMapPoint: '',
+      searchType: ''
     }
   }
 
@@ -40,7 +42,10 @@ export const reactClass = connect(
   }
 
   handleFormChange(e) {
-    this.setState({searchShipId: e.currentTarget.value});
+    this.setState({
+      searchShipId: e.currentTarget.value,
+      searchType: 'ship'
+    });
     this.get_statistic_info(e.currentTarget.value);
   }
 
@@ -186,15 +191,30 @@ export const reactClass = connect(
 
 
   selectMap = e => {
+    e.preventDefault();
     e.stopPropagation();
-    let option = e.currentTarget.value;
-    this.setState({nowmap:option})
+    if(e.currentTarget.value != '0'){
+      console.log('event')
+      let option = e.currentTarget.value;
+      this.setState({nowmap:option})
+    } else {
+      this.setState({nowmap: ''})
+    }
   };
 
   selectPoint = e => {
+    e.preventDefault();
     e.stopPropagation();
-    let option = e.currentTarget.value;
-    this.get_statistic_info_by_map(option);
+    if(e.currentTarget.value != '0'){
+      let option = e.currentTarget.value;
+      let sp = option.split(','), map = sp[0], point = sp[1], level = sp[2],
+        uri = `${map.replace(/\-/g, '')}/${level + level ? '/' : ''}${point}`;
+      this.setState({
+        searchMapPoint: uri,
+        searchType: 'map'
+      });
+      this.get_statistic_info_by_map(uri);
+    }
   }
 
   handleNewShip = e => {
@@ -223,32 +243,25 @@ export const reactClass = connect(
     }
   }
 
-  get_statistic_info_by_map(valueStr){
+  get_statistic_info_by_map(...value){
     this.setState({detail:{}});
-    var that=this;
-    var value = valueStr.split(",");
-    var map=value[0];
-    var point=value[1];
-    var level = value[2];
-    var fetchurl = 'http://db.kcwiki.moe/drop/map/';
-    fetchurl=fetchurl+map.split('-').join('')+'/';
-    fetchurl=fetchurl+ (level?(level+'/'):'') + point + '-' + 'SAB.json';
-    console.log(fetchurl);
-    fetch(fetchurl)
+    const _this = this;
+    console.log(value);
+    fetch('http://db.kcwiki.moe/drop/map/'+ value[0] +'-'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json')
       .then(res => res.json())
       .then(function(response){
-        that.setState({detail:response})
+        _this.setState({detail:response})
       });
   }
 
 
   get_statistic_info(...value){
     this.setState({detail:{}});
-    var that=this;
+    const _this = this;
     fetch('http://db.kcwiki.moe/drop/ship/'+ value[0] +'/'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json')
       .then(res => res.json())
       .then(function(response){
-        that.setState({detail:response})
+        _this.setState({detail:response})
       });
   }
 
@@ -256,8 +269,15 @@ export const reactClass = connect(
     e.preventDefault();
     e.stopPropagation();
     this.setState({battle_rank: e.target.text});
-    if(this.state.searchShipId){
-      this.get_statistic_info(this.state.searchShipId, e.target.text)
+    switch(this.state.searchType){
+      case 'ship':
+        this.get_statistic_info(this.state.searchShipId, e.target.text);
+        break;
+      case 'map':
+        this.get_statistic_info_by_map(this.state.searchMapPoint, e.target.text);
+        break;
+      default:
+        break;
     }
     const sortFlag = this.state.sortFlag;
     if(sortFlag != 'rate' && sortFlag != 'name' && e.target.text.length - 1 < sortFlag){
@@ -346,6 +366,43 @@ export const reactClass = connect(
           </Col>
         </Row>
         <Row>
+          <Col xs={6}>
+            <FormControl componentClass="select" placeholder="选择海域" onChange={this.selectMap}>
+              <option value="0">请选择</option>
+              {Object.keys(allmaps).map(function(amap){
+                return(
+                  <option value={amap}>{amap}</option>
+                )
+              })}
+            </FormControl>
+          </Col>
+          <Col xs={6}>
+            <FormControl componentClass="select" placeholder="选择海域中位置" onChange={this.selectPoint}>
+              <option value="0">请选择</option>
+              {
+                Object.keys(mapdetail.spots).sort().map(function(point){
+                  if(point=="1"||point=="2"||point=="3"){
+
+                  }else if(parseInt(selectedmap)>10){
+                    var hardlevel = ["甲","乙","丙"];
+                    return hardlevel.map(function(level,index){
+                      var value=[selectedmap,point,3-index];
+                      return(
+                        <option value={value}>{point}({level})</option>
+                      )
+                    })
+                  }else{
+                    var value=[selectedmap,point];
+                    return(
+                      <option value={value}>{point}</option>
+                    )
+                  }
+                })
+              }
+            </FormControl>
+          </Col>
+        </Row>
+        <Row>
           <Col xs={12}>
             <ButtonGroup justified>
               {
@@ -365,7 +422,7 @@ export const reactClass = connect(
           <thead>
             <tr>
               <th onClick={this.sortList} value="name">
-                位置&nbsp;&nbsp;
+                {this.state.searchType == 'map'? '舰娘': '位置'}&nbsp;&nbsp;
                 {this.state.sortFlag == 'name' ? <FontAwesome name="sort-amount-desc" onClick={e => {e.stopPropagation()}}/> : ''}
               </th>
               {
@@ -398,38 +455,6 @@ export const reactClass = connect(
           }
           </tbody>
         </Table>
-        <div>
-          <FormControl componentClass="select" onChange={this.selectMap}>
-            <option value={selectedmap}>{selectedmap}</option>
-            {Object.keys(allmaps).map(function(amap){
-              return(
-                    <option value={amap}>{amap}</option>
-              )
-            })}
-          </FormControl>
-          <FormControl componentClass="select" onChange={this.selectPoint}>
-          {
-            Object.keys(mapdetail.spots).sort().map(function(point){
-              if(point=="1"||point=="2"||point=="3"){
-
-              }else if(parseInt(selectedmap)>10){
-                var hardlevel = ["甲","乙","丙"];
-                return hardlevel.map(function(level,index){
-                  var value=[selectedmap,point,3-index];
-                  return(
-                    <option value={value}>{point}({level})</option>
-                  )
-                })
-              }else{
-                var value=[selectedmap,point];
-                return(
-                  <option value={value}>{point}</option>
-                )
-              }
-            })
-          }
-          </FormControl>
-        </div>
       </div>
     )
   }
