@@ -367,8 +367,8 @@ export const reactClass = connect(
         </Row>
         <Row>
           <Col xs={6}>
-            <FormControl componentClass="select" placeholder="选择海域" onChange={this.selectMap}>
-              <option value="0">请选择</option>
+            <FormControl componentClass="select" onChange={this.selectMap}>
+              <option value="0">请选择海域</option>
               {Object.keys(allmaps).map(function(amap){
                 return(
                   <option value={amap}>{amap}</option>
@@ -377,8 +377,8 @@ export const reactClass = connect(
             </FormControl>
           </Col>
           <Col xs={6}>
-            <FormControl componentClass="select" placeholder="选择海域中位置" onChange={this.selectPoint}>
-              <option value="0">请选择</option>
+            <FormControl componentClass="select" onChange={this.selectPoint}>
+              <option value="0">请选择海域中位置</option>
               {
                 Object.keys(mapdetail.spots).sort().map(function(point){
                   if(point=="1"||point=="2"||point=="3"){
