@@ -16,7 +16,8 @@ export const reactClass = connect(
   state => ({
     horizontal: state.config.poi.layout || 'horizontal',
     $ships: state.const.$ships,
-    $shipTypes: state.const.$shipTypes
+    $shipTypes: state.const.$shipTypes,
+    allmaps:state.fcd.map
   }),
   null, null, {pure: false}
 )(class PluginStatistic extends Component {
@@ -42,9 +43,38 @@ export const reactClass = connect(
     this.get_statistic_info(e.currentTarget.value);
   }
 
+  maplist(){
+    var allmaps = this.props.allmaps;
+    var list = [];
+    for(var p in allmaps){
+      if(parseInt(p)<10){
+        var mapdetail = allmaps[p].spots;
+        for(var point in mapdetail){
+          if(point!="1"){
+            list.push(p+":"+point);
+          }
+        }
+      }else{
+        var mapdetail = allmaps[p].spots;
+        for(var point in mapdetail){
+          if(point!="1"){
+            list.push(p+":"+point+"(甲)");
+            list.push(p+":"+point+"(乙)");
+            list.push(p+":"+point+"(丙)");
+          }
+        }
+      }
+    }
+    return list;
+  }
+
   simplfyship() {
     try {
-      return this.simplfyship_D();
+      var ships=this.simplfyship_D();
+      var maps = [];
+      var list = maps.concat(ships);
+      console.log(list);
+      return list;
     } catch (e) {
       console.log(e);
       try {
@@ -54,7 +84,6 @@ export const reactClass = connect(
         return [];
       }
     }
-
   }
 
   simplfyship_D() {
@@ -116,7 +145,12 @@ export const reactClass = connect(
     }
     let lowstr = expStr.toLowerCase();
     this.simplfyship().map((id) => {
-      var shipname = $ship[id].api_name;
+      var shipname;
+      if(id.indexOf(":")>0){
+        shipname=id;
+      }else{
+        shipname = $ship[id].api_name;
+      }
       if(lowstr>='a'&&lowstr<='z'){
         var match=true;
         for(var i=0;i<lowstr.length;i++){
@@ -134,7 +168,7 @@ export const reactClass = connect(
           allship.push(id);
         }
       }
-      if (new RegExp(expStr, 'i').test($ship[id].api_name))
+      if (new RegExp(expStr, 'i').test(shipname))
         allship.push(id);
     });
     this.setState({ship_targets: allship, input_shipList: e.target.value})
@@ -213,17 +247,28 @@ export const reactClass = connect(
     const createList = arr => {
       let out = [];
       arr.map((option) => {
-        const shipinfo = $ships[option],
-          shipname = shipinfo.api_name,
-          shiptypeid = shipinfo.api_stype,
-          shiptypename = $shipTypes[shiptypeid].api_name;
-        out.push(
-          <li onMouseDown={this.selectShip} value={option}>
-            <a>
-              {shiptypename + ' : ' + shipname}
-            </a>
-          </li>
-        )
+        if(option.indexOf(":")>0){
+          out.push(
+            <li onMouseDown={this.selectShip} value={option}>
+              <a>
+                {option}
+              </a>
+            </li>
+          )
+        }else{
+          const shipinfo = $ships[option],
+            shipname = shipinfo.api_name,
+            shiptypeid = shipinfo.api_stype,
+            shiptypename = $shipTypes[shiptypeid].api_name;
+          out.push(
+            <li onMouseDown={this.selectShip} value={option}>
+              <a>
+                {shiptypename + ' : ' + shipname}
+              </a>
+            </li>
+          )
+        }
+
       });
       return out;
     };
