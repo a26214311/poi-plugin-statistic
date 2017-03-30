@@ -7,6 +7,7 @@ import {store} from 'views/create-store'
 import {join} from 'path'
 import {FormGroup, FormControl, ListGroup, ListGroupItem, Button, Row, Col, Table, ButtonGroup} from 'react-bootstrap'
 import FontAwesome from 'react-fontawesome'
+import {getShipRare} from './drop_map'
 
 
 import {extensionSelectorFactory} from 'views/utils/selectors'
@@ -210,7 +211,7 @@ export const reactClass = connect(
     fetch('http://db.kcwiki.moe/drop/map/'+ value[0] +'-'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json')
       .then(res => res.json())
       .then(function(response){
-        _this.setState({detail:response})
+        _this.setState({detail:response,sortFlag: 'name'})
       });
   }
 
@@ -221,7 +222,7 @@ export const reactClass = connect(
     fetch('http://db.kcwiki.moe/drop/ship/'+ value[0] +'/'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json')
       .then(res => res.json())
       .then(function(response){
-        _this.setState({detail:response})
+        _this.setState({detail:response,sortFlag: 'rate'})
       });
   }
 
@@ -241,7 +242,12 @@ export const reactClass = connect(
     }
     const sortFlag = this.state.sortFlag;
     if(sortFlag != 'rate' && sortFlag != 'name' && e.target.text.length - 1 < sortFlag){
-      this.setState({sortFlag: 'rate'})
+      if(this.state.searchType=='map'){
+        this.setState({sortFlag: 'name'})
+      }else{
+        this.setState({sortFlag: 'rate'})
+      }
+
     }
   };
 
@@ -296,7 +302,7 @@ export const reactClass = connect(
       const sortFlag = this.state.sortFlag;
       switch(sortFlag) {
         case 'name':
-          detailkeys.sort(); break;
+          detailkeys.sort((a, b) => (getShipRare(a)-getShipRare(b)) * -100 + detaildata[b].rate - detaildata[a].rate); break;
         case 'rate':
           detailkeys.sort((a, b) => detaildata[b].rate - detaildata[a].rate); break;
         default:
@@ -402,11 +408,22 @@ export const reactClass = connect(
           </thead>
           <tbody>
           {
-            detailkeys.map(function(dropkey){
+            detailkeys.map(dropkey =>{
               const dropdata = detaildata[dropkey];
+              let keydata=[];
+              if(this.state.searchType=='map'){
+                const rare = getShipRare(dropkey);
+                if(rare){
+                  keydata.push(<font color={"red"}>{dropkey}</font>);
+                }else{
+                  keydata.push(<font>{dropkey}</font>);
+                }
+              }else{
+                keydata.push(<font>{dropkey}</font>);
+              }
               return(
                 <tr>
-                  <td>{dropkey}</td>
+                  <td><font>{keydata}</font></td>
                     {dropdata.rankCount? dropdata.rankCount.map(rank => <td>{rank}</td>) : <td>{dropdata.totalCount}</td>}
                   <td>{dropdata.rate}%</td>
                 </tr>
