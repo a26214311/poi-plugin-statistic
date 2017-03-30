@@ -264,6 +264,23 @@ export const reactClass = connect(
     const $shipTypes = this.props.$shipTypes;
     const rankLevel = ['SAB', 'SA', 'S', 'A', 'B'];
     const allmaps = this.props.allmaps;
+    let mapkeys = Object.keys(allmaps);
+    let fmapkey = [];
+    let bmapkey = [];
+    let maxmap = 30;
+    for(var p in allmaps){
+      if(parseInt(p)>maxmap){
+        maxmap=parseInt(p);
+      }
+    }
+    for(var p in allmaps){
+      if(parseInt(p)==maxmap){
+        fmapkey.push(p);
+      }else{
+        bmapkey.push(p);
+      }
+    }
+    mapkeys=fmapkey.concat(bmapkey);
     const selectedmap = this.state.nowmap;
     const mapdetail = selectedmap?allmaps[selectedmap]:{spots:{}};
     const createList = arr => {
@@ -335,7 +352,7 @@ export const reactClass = connect(
           <Col xs={6}>
             <FormControl componentClass="select" onChange={this.selectMap}>
               <option value="0">请选择海域</option>
-              {Object.keys(allmaps).map(function(amap){
+              {mapkeys.map(function(amap){
                 return(
                   <option value={amap}>{amap}</option>
                 )
