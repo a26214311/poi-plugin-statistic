@@ -1,6 +1,4 @@
-
-
-var constants = {
+const constants = {
     "(无)": {
         chineseName: "",
         nameForSearch: "",
@@ -979,9 +977,9 @@ var constants = {
         shipType: "驱逐舰",
         rare: true
     }
-}
+};
 
-var searchTag = {
+const searchTag = {
     "驱逐舰": ":dd",
     "轻巡洋舰": ":cl",
     "重巡洋舰": ":ca",
@@ -997,9 +995,9 @@ var searchTag = {
     "练习巡洋舰": ":clp",
     "补给舰": ":ao",
     "稀有": ":稀有,:rare,:sr,:ur"
-}
+};
 
-var mapContants = {
+const mapContants = {
     '鎮守府正面海域': '1-1',
     '南西諸島沖': '1-2',
     '製油所地帯沿岸': '1-3',
@@ -1041,16 +1039,8 @@ var mapContants = {
     'コロネハイカラ島東方沖': '2015年秋季活动/E-3',
     '西方海域戦線 ステビア海': '2015年秋季活动/E-4',
     'バニラ湾沖': '2015年秋季活动/E-5',
-}
+};
 
-export const getShipRare = ship => {
-  if (ship == null) {
-    return false
-  }else{
-      if(constants[ship]){
-        return constants[ship].rare;
-      }else{
-        return true;
-      }
-  }
-}
+const getShipRare = ship => ship == null ? false : constants[ship] ? constants[ship].rare : true;
+
+export default getShipRare;

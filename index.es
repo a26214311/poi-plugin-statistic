@@ -7,7 +7,7 @@ import {store} from 'views/create-store'
 import {join} from 'path'
 import {FormGroup, FormControl, ListGroup, ListGroupItem, Button, Row, Col, Table, ButtonGroup} from 'react-bootstrap'
 import FontAwesome from 'react-fontawesome'
-import {getShipRare} from './drop_map'
+import getShipRare from './drop_map'
 
 
 import {extensionSelectorFactory} from 'views/utils/selectors'
@@ -431,17 +431,19 @@ export const reactClass = connect(
               if(this.state.searchType=='map'){
                 const rare = getShipRare(dropkey);
                 if(rare){
-                  keydata.push(<font color={"red"}>{dropkey}</font>);
+                  keydata.push(<span className="rare-ship">{dropkey}</span>);
                 }else{
-                  keydata.push(<font>{dropkey}</font>);
+                  keydata.push(<span>{dropkey}</span>);
                 }
               }else{
-                keydata.push(<font>{dropkey}</font>);
+                keydata.push(<span>{dropkey}</span>);
               }
               return(
                 <tr>
-                  <td><font>{keydata}</font></td>
-                    {dropdata.rankCount? dropdata.rankCount.map(rank => <td>{rank}</td>) : <td>{dropdata.totalCount}</td>}
+                  <td>
+                    {keydata}
+                  </td>
+                  {dropdata.rankCount? dropdata.rankCount.map(rank => <td>{rank}</td>) : <td>{dropdata.totalCount}</td>}
                   <td>{dropdata.rate}%</td>
                 </tr>
               )

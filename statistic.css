@@ -61,3 +61,8 @@
 #statistic th {
 	cursor: pointer;
 }
+
+#statistic .rare-ship {
+	color: #ff2b42;
+	font-weight: bold;
+}
