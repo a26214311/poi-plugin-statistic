@@ -262,7 +262,7 @@ export const reactClass = connect(
     fetch('http://db.kcwiki.moe/drop/ship/'+ value[0] +'/'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json')
       .then(res => res.json())
       .then(function(response){
-        _this.setState({detail:response,sortFlag: 'rate'})
+        _this.setState({detail:response,sortFlag: 'rate',imgurl:''})
       });
   }
 
@@ -454,7 +454,9 @@ export const reactClass = connect(
           </Col>
         </Row>
         <div>
-          <img width={340} src={this.state.imgurl}></img>
+          {
+            this.state.imgurl?<img width={340} src={this.state.imgurl}></img>:<span></span>
+          }
         </div>
         <Table striped bordered condensed hover>
           <thead>
