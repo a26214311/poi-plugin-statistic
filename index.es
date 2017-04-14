@@ -35,6 +35,8 @@ export const reactClass = connect(
       nowmap:undefined,
       searchShipId: '',
       searchMapPoint: '',
+      imgurl:'',
+      savedurl:{},
       searchType: ''
     }
   }
@@ -169,13 +171,51 @@ export const reactClass = connect(
     e.preventDefault();
     e.stopPropagation();
     if(e.currentTarget.value != '0'){
-      console.log('event')
       let option = e.currentTarget.value;
-      this.setState({nowmap:option})
+      this.getMapImgUrl(option);
     } else {
       this.setState({nowmap: ''})
     }
   };
+
+  getMapImgUrl(mapid){
+    var savedurl = this.state.savedurl;
+    var imgObj = savedurl[mapid];
+    if(imgObj){
+      this.setState({nowmap:mapid,imgurl:imgObj.img,detail:''});
+    }else{
+      var mapurl = "https://db.kcwiki.moe/drop/map/"+mapid.split("-").join('');
+      /*
+      if(parseInt(mapid)>30){
+        var url = "https://db.kcwiki.moe/drop/map/"+ mapid.split("-").join('') +"/3/A-SAB.html";
+      }else {
+        var url = "https://db.kcwiki.moe/drop/map/" + mapid.split("-").join('') + "/A-SAB.html";
+      }
+      */
+      const _this=this;
+      var url = '';
+      fetch(mapurl)
+        .then(function(res){
+          url = res.url;
+          return res.text();
+        }).then(function(response){
+          var n = url.lastIndexOf("SAB.html");
+          var defaultPoint = url.substring(n-2,n-1);
+          var imgurlnew = _this.getMapImgUrlFromHtml(response);
+          savedurl[mapid]={img:imgurlnew,point:defaultPoint};
+          _this.setState({nowmap:mapid,imgurl:imgurlnew,detail:'',savedurl:savedurl});
+        });
+    }
+
+  }
+
+  getMapImgUrlFromHtml(htmlstr){
+    var n = htmlstr.indexOf('https://upload.kcwiki.moe');
+    var sub1 = htmlstr.substring(n);
+    var n1 = sub1.indexOf('>');
+    var imgurl = sub1.substring(0,n1-1);
+    return imgurl;
+  }
 
   selectPoint = e => {
     e.preventDefault();
@@ -401,6 +441,9 @@ export const reactClass = connect(
             </ButtonGroup>
           </Col>
         </Row>
+        <div>
+          <img width={340} src={this.state.imgurl}></img>
+        </div>
         <Table striped bordered condensed hover>
           <thead>
             <tr>
