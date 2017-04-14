@@ -371,6 +371,13 @@ export const reactClass = connect(
           break;
       }
     }
+    var points = [];
+    if(selectedmap){
+      if(this.state.savedurl[selectedmap]){
+        points.push(this.state.savedurl[selectedmap].point);
+      }
+      points = points.concat(Object.keys(mapdetail.spots).sort());
+    }
     return (
       <div id="statistic" className="statistic">
         <link rel="stylesheet" href={join(__dirname, 'statistic.css')}/>
@@ -403,21 +410,26 @@ export const reactClass = connect(
             <FormControl componentClass="select" onChange={this.selectPoint}>
               <option value="0">请选择海域中位置</option>
               {
-                Object.keys(mapdetail.spots).sort().map(function(point){
+                points.map(function(point,index){
+                  var bossstr='';
+                  if(point!="A"&&index==0){
+                    bossstr='(Boss)';
+                  }
                   if(point=="1"||point=="2"||point=="3"){
 
                   }else if(parseInt(selectedmap)>10){
                     var hardlevel = ["甲","乙","丙"];
                     return hardlevel.map(function(level,index){
                       var value=[selectedmap,point,3-index];
+
                       return(
-                        <option value={value}>{point}({level})</option>
+                        <option value={value}>{point}{bossstr}({level})</option>
                       )
                     })
                   }else{
                     var value=[selectedmap,point];
                     return(
-                      <option value={value}>{point}</option>
+                      <option value={value}>{point}{bossstr}</option>
                     )
                   }
                 })
