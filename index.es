@@ -232,10 +232,14 @@ export const reactClass = connect(
 
   getMapImgUrlFromHtml(htmlstr){
     var n = htmlstr.indexOf('https://upload.kcwiki.moe');
-    var sub1 = htmlstr.substring(n);
-    var n1 = sub1.indexOf('>');
-    var imgurl = sub1.substring(0,n1-1);
-    return imgurl;
+    if(n + 1){
+      var sub1 = htmlstr.substring(n);
+      var n1 = sub1.indexOf('>');
+      var imgurl = sub1.substring(0,n1-1);
+      return imgurl;
+    } else {
+      return 'undefined'
+    }
   }
 
   selectPoint = e => {
@@ -465,7 +469,7 @@ export const reactClass = connect(
         </Row>
         <div>
           {
-            this.state.imgurl ? <img className="mapImg" src={this.state.imgurl} /> : <span></span>
+            this.state.imgurl != 'undefined' ? <img className="mapImg" src={this.state.imgurl} /> : <span></span>
           }
         </div>
         <Table striped bordered condensed hover>
