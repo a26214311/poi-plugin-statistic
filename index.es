@@ -172,6 +172,17 @@ export const reactClass = connect(
     e.stopPropagation();
     if(e.currentTarget.value != '0'){
       let option = e.currentTarget.value;
+      let mapurl = "https://db.kcwiki.moe/drop/map/" + option.split("-").join('');
+      fetch(mapurl)
+        .then(res => {
+          let url = res.url;
+          let uri = url.substring(url.indexOf('/map') + 5, url.indexOf('-SAB'));
+          this.setState({
+            searchMapPoint: uri,
+            searchType: 'map'
+          });
+          this.get_statistic_info_by_map(uri);
+        });
       this.getMapImgUrl(option);
     } else {
       this.setState({nowmap: ''})
@@ -371,13 +382,8 @@ export const reactClass = connect(
           break;
       }
     }
-    var points = [];
-    if(selectedmap){
-      if(this.state.savedurl[selectedmap]){
-        points.push(this.state.savedurl[selectedmap].point);
-      }
-      points = points.concat(Object.keys(mapdetail.spots).sort());
-    }
+    let points = Object.keys(mapdetail.spots).sort(),
+      bossPoint = selectedmap && this.state.savedurl[selectedmap] ? this.state.savedurl[selectedmap].point : 'none';
     return (
       <div id="statistic" className="statistic">
         <link rel="stylesheet" href={join(__dirname, 'statistic.css')}/>
@@ -410,27 +416,25 @@ export const reactClass = connect(
             <FormControl componentClass="select" onChange={this.selectPoint}>
               <option value="0">请选择海域中位置</option>
               {
-                points.map(function(point,index){
-                  var bossstr='';
-                  if(point!="A"&&index==0){
-                    bossstr='(Boss)';
-                  }
-                  if(point=="1"||point=="2"||point=="3"){
-
-                  }else if(parseInt(selectedmap)>10){
-                    var hardlevel = ["甲","乙","丙"];
-                    return hardlevel.map(function(level,index){
-                      var value=[selectedmap,point,3-index];
-
-                      return(
-                        <option value={value}>{point}{bossstr}({level})</option>
+                points.map((point) => {
+                  if(!parseInt(point)){
+                    if(parseInt(selectedmap) > 10){
+                      const hardlevel = ["甲", "乙", "丙"];
+                      return hardlevel.map((level, index) =>
+                        <option value={[selectedmap, point, 3 - index]} selected={point == bossPoint && !index ? 'selected' : ''}>
+                          {point}
+                          {point == bossPoint ? '(Boss)' : ''}
+                          ({level})
+                        </option>
                       )
-                    })
-                  }else{
-                    var value=[selectedmap,point];
-                    return(
-                      <option value={value}>{point}{bossstr}</option>
-                    )
+                    } else {
+                      return(
+                        <option value={[selectedmap, point]} selected={point == bossPoint ? 'selected' : ''}>
+                          {point}
+                          {point == bossPoint ? '(Boss)' : ''}
+                        </option>
+                      )
+                    }
                   }
                 })
               }
