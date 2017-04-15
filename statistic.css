@@ -66,3 +66,8 @@
 	color: #ff2b42;
 	font-weight: bold;
 }
+
+#statistic .mapImg {
+	width: 100%;
+	height: auto;
+}

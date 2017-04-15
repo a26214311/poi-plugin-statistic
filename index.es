@@ -171,23 +171,33 @@ export const reactClass = connect(
     e.preventDefault();
     e.stopPropagation();
     if(e.currentTarget.value != '0'){
-      let option = e.currentTarget.value;
-      let mapurl = "https://db.kcwiki.moe/drop/map/" + option.split("-").join('');
-      fetch(mapurl)
-        .then(res => {
-          let url = res.url;
-          let uri = url.substring(url.indexOf('/map') + 5, url.indexOf('-SAB'));
-          this.setState({
-            searchMapPoint: uri,
-            searchType: 'map'
+      const option = e.currentTarget.value;
+      const mapurl = "https://db.kcwiki.moe/drop/map/" + option.split("-").join('');
+      const savedurl = this.state.savedurl;
+      if(savedurl[option]){
+        let uri = `${option.replace(/\-/g, '')}/${parseInt(option) > 10 ? '3/' : ''}${savedurl[option].point}`
+        this.getMapByUri(uri)
+      } else {
+        fetch(mapurl)
+          .then(res => {
+            let url = res.url;
+            let uri = url.substring(url.indexOf('/map') + 5, url.indexOf('-SAB'));
+            this.getMapByUri(uri)
           });
-          this.get_statistic_info_by_map(uri);
-        });
+      }
       this.getMapImgUrl(option);
     } else {
       this.setState({nowmap: ''})
     }
   };
+
+  getMapByUri(uri) {
+    this.setState({
+      searchMapPoint: uri,
+      searchType: 'map'
+    });
+    this.get_statistic_info_by_map(uri);
+  }
 
   getMapImgUrl(mapid){
     var savedurl = this.state.savedurl;
@@ -235,11 +245,7 @@ export const reactClass = connect(
       let option = e.currentTarget.value;
       let sp = option.split(','), map = sp[0], point = sp[1], level = sp[2],
         uri = `${map.replace(/\-/g, '')}/${level ? level + '/' : ''}${point}`;
-      this.setState({
-        searchMapPoint: uri,
-        searchType: 'map'
-      });
-      this.get_statistic_info_by_map(uri);
+      this.getMapByUri(uri)
     }
   }
 
@@ -459,7 +465,7 @@ export const reactClass = connect(
         </Row>
         <div>
           {
-            this.state.imgurl?<img width={340} src={this.state.imgurl}></img>:<span></span>
+            this.state.imgurl ? <img className="mapImg" src={this.state.imgurl} /> : <span></span>
           }
         </div>
         <Table striped bordered condensed hover>
