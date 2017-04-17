@@ -174,6 +174,7 @@ export const reactClass = connect(
       const option = e.currentTarget.value;
       const mapurl = "https://db.kcwiki.moe/drop/map/" + option.split("-").join('');
       const savedurl = this.state.savedurl;
+      /*
       if(savedurl[option]){
         let uri = `${option.replace(/\-/g, '')}/${parseInt(option) > 10 ? '3/' : ''}${savedurl[option].point}`
         this.getMapByUri(uri)
@@ -185,6 +186,7 @@ export const reactClass = connect(
             this.getMapByUri(uri)
           });
       }
+      */
       this.getMapImgUrl(option);
     } else {
       this.setState({nowmap: ''})
@@ -203,16 +205,11 @@ export const reactClass = connect(
     var savedurl = this.state.savedurl;
     var imgObj = savedurl[mapid];
     if(imgObj){
-      this.setState({nowmap:mapid,imgurl:imgObj.img,detail:''});
+      let uri = `${mapid.replace(/\-/g, '')}/${parseInt(mapid) > 10 ? '3/' : ''}${savedurl[mapid].point}`;
+      this.setState({nowmap:mapid,imgurl:imgObj.img,detail:'',searchMapPoint:uri,searchType: 'map'},
+        ()=>this.get_statistic_info_by_map(uri));
     }else{
       var mapurl = "https://db.kcwiki.moe/drop/map/"+mapid.split("-").join('');
-      /*
-      if(parseInt(mapid)>30){
-        var url = "https://db.kcwiki.moe/drop/map/"+ mapid.split("-").join('') +"/3/A-SAB.html";
-      }else {
-        var url = "https://db.kcwiki.moe/drop/map/" + mapid.split("-").join('') + "/A-SAB.html";
-      }
-      */
       const _this=this;
       var url = '';
       fetch(mapurl)
@@ -224,7 +221,12 @@ export const reactClass = connect(
           var defaultPoint = url.substring(n-2,n-1);
           var imgurlnew = _this.getMapImgUrlFromHtml(response);
           savedurl[mapid]={img:imgurlnew,point:defaultPoint};
-          _this.setState({nowmap:mapid,imgurl:imgurlnew,detail:'',savedurl:savedurl});
+          let uri = url.substring(url.indexOf('/map') + 5, url.indexOf('-SAB'));
+          _this.setState(
+            {nowmap:mapid,imgurl:imgurlnew,detail:'',savedurl:savedurl,
+              searchMapPoint:uri,searchType: 'map'},
+            ()=>_this.get_statistic_info_by_map(uri)
+          );
         });
     }
 
