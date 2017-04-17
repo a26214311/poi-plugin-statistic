@@ -5,7 +5,7 @@ import {createSelector} from 'reselect'
 import {store} from 'views/create-store'
 
 import {join} from 'path'
-import {FormGroup, FormControl, ListGroup, ListGroupItem, Button, Row, Col, Table, ButtonGroup} from 'react-bootstrap'
+import {FormGroup, FormControl, ListGroup, ListGroupItem, Button, Row, Col, Table, ButtonGroup,OverlayTrigger,Tooltip} from 'react-bootstrap'
 import FontAwesome from 'react-fontawesome'
 import getShipRare from './drop_map'
 
@@ -395,7 +395,20 @@ export const reactClass = connect(
       }
     }
     let points = Object.keys(mapdetail.spots).sort(),
-      bossPoint = selectedmap && this.state.savedurl[selectedmap] ? this.state.savedurl[selectedmap].point : 'none';
+    bossPoint = selectedmap && this.state.savedurl[selectedmap] ? this.state.savedurl[selectedmap].point : 'none';
+    let nowpoint = this.state.searchMapPoint;
+    let pointvalue;
+    if(nowpoint!=''){
+      let pa = nowpoint.split("/");
+      if(pa.length==3){
+        pointvalue = [selectedmap, pa[2], pa[1]];
+      }else{
+        pointvalue = [selectedmap,pa[1]];
+      }
+    }else{
+      pointvalue = 0;
+    }
+    console.log(pointvalue);
     return (
       <div id="statistic" className="statistic">
         <link rel="stylesheet" href={join(__dirname, 'statistic.css')}/>
@@ -426,7 +439,7 @@ export const reactClass = connect(
           </Col>
           <Col xs={6}>
             <FormControl componentClass="select" onChange={this.selectPoint}
-                         value={parseInt(selectedmap)>10?[selectedmap, bossPoint, 3]:[selectedmap, bossPoint]}>
+                         value={pointvalue}>
               <option value="0">请选择海域中位置</option>
               {
                 points.map((point) => {
@@ -515,7 +528,25 @@ export const reactClass = connect(
               return(
                 <tr>
                   <td>
-                    {keydata}
+
+                    <OverlayTrigger placement="bottom" overlay={
+                      <Tooltip>
+                        <div>
+                          {Object.keys(dropdata.enemy).map(function(enemy){
+                            return(
+                              <div>
+                                {enemy}
+                                {dropdata.enemy[enemy].count}
+                              </div>
+                            )}
+                          )}
+                        </div>
+                      </Tooltip>
+                    }>
+                      <div>{keydata}</div>
+                    </OverlayTrigger>
+
+
                   </td>
                   {dropdata.rankCount? dropdata.rankCount.map(rank => <td>{rank}</td>) : <td>{dropdata.totalCount}</td>}
                   <td>{dropdata.rate}%</td>
