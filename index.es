@@ -529,33 +529,38 @@ export const reactClass = connect(
               return(
                 <tr>
                   <td>
-                    <OverlayTrigger placement="right" overlay={
-                      <Tooltip>
-                        <div>
-                          {Object.keys(dropdata.enemy).map(function(enemy){
-                            return(
-                              <div>
-                                {enemy}
-                                <div>
-                                  {ra.length>1?dropdata.enemy[enemy].count.map(function(count,index){
-                                    return(
-                                      <span>
-                                        {index?'/':''}{ra[index]}:{count}
+                    {this.state.searchType == 'map' ?
+                      <OverlayTrigger placement="right" overlay={
+                        <Tooltip>
+                          <div>
+                            {Object.keys(dropdata.enemy).map(function (enemy) {
+                                return (
+                                  <div>
+                                    {enemy}
+                                    <div>
+                                      {ra.length > 1 ? dropdata.enemy[enemy].count.map(function (count, index) {
+                                        return (
+                                          <span>
+                                        {index ? '/' : ''}{ra[index]}:{count}
                                       </span>
-                                    )
-                                  })
-                                  :
-                                  <span>{ra[0]}:{dropdata.enemy[enemy].count}</span>
-                                  }
-                                </div>
-                              </div>
+                                        )
+                                      })
+                                        :
+                                        <span>{ra[0]}:{dropdata.enemy[enemy].count}</span>
+                                      }
+                                    </div>
+                                  </div>
+                                )
+                              }
                             )}
-                          )}
-                        </div>
-                      </Tooltip>
-                    }>
+                          </div>
+                        </Tooltip>
+                      }>
+                        <div>{keydata}</div>
+                      </OverlayTrigger>
+                      :
                       <div>{keydata}</div>
-                    </OverlayTrigger>
+                    }
                   </td>
                   {dropdata.rankCount? dropdata.rankCount.map(rank => <td>{rank}</td>) : <td>{dropdata.totalCount}</td>}
                   <td>{dropdata.rate}%</td>
