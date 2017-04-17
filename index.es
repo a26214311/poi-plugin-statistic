@@ -525,18 +525,26 @@ export const reactClass = connect(
               }else{
                 keydata.push(<span>{dropkey}</span>);
               }
+              var ra = this.state.battle_rank.split('');
               return(
                 <tr>
                   <td>
-
-                    <OverlayTrigger placement="bottom" overlay={
+                    <OverlayTrigger placement="right" overlay={
                       <Tooltip>
                         <div>
                           {Object.keys(dropdata.enemy).map(function(enemy){
                             return(
                               <div>
                                 {enemy}
-                                {dropdata.enemy[enemy].count}
+                                <div>
+                                  {dropdata.enemy[enemy].count.map(function(count,index){
+                                    return(
+                                      <span>
+                                        {ra[index]}:{count}/
+                                      </span>
+                                    )
+                                  })}
+                                </div>
                               </div>
                             )}
                           )}
@@ -545,8 +553,6 @@ export const reactClass = connect(
                     }>
                       <div>{keydata}</div>
                     </OverlayTrigger>
-
-
                   </td>
                   {dropdata.rankCount? dropdata.rankCount.map(rank => <td>{rank}</td>) : <td>{dropdata.totalCount}</td>}
                   <td>{dropdata.rate}%</td>
