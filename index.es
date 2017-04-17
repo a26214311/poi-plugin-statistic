@@ -540,7 +540,7 @@ export const reactClass = connect(
                                   {dropdata.enemy[enemy].count.map(function(count,index){
                                     return(
                                       <span>
-                                        {ra[index]}:{count}/
+                                        {index?'/':''}{ra[index]}:{count}
                                       </span>
                                     )
                                   })}
