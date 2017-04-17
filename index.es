@@ -423,7 +423,8 @@ export const reactClass = connect(
             </FormControl>
           </Col>
           <Col xs={6}>
-            <FormControl componentClass="select" onChange={this.selectPoint}>
+            <FormControl componentClass="select" onChange={this.selectPoint}
+                         value={parseInt(selectedmap)>10?[selectedmap, bossPoint, 3]:[selectedmap, bossPoint]}>
               <option value="0">请选择海域中位置</option>
               {
                 points.map((point) => {
@@ -431,7 +432,7 @@ export const reactClass = connect(
                     if(parseInt(selectedmap) > 10){
                       const hardlevel = ["甲", "乙", "丙"];
                       return hardlevel.map((level, index) =>
-                        <option value={[selectedmap, point, 3 - index]} selected={point == bossPoint && !index ? 'selected' : ''}>
+                        <option value={[selectedmap, point, 3 - index]}>
                           {point}
                           {point == bossPoint ? '(Boss)' : ''}
                           ({level})
@@ -439,7 +440,7 @@ export const reactClass = connect(
                       )
                     } else {
                       return(
-                        <option value={[selectedmap, point]} selected={point == bossPoint ? 'selected' : ''}>
+                        <option value={[selectedmap, point]} >
                           {point}
                           {point == bossPoint ? '(Boss)' : ''}
                         </option>
