@@ -408,7 +408,6 @@ export const reactClass = connect(
     }else{
       pointvalue = 0;
     }
-    console.log(pointvalue);
     return (
       <div id="statistic" className="statistic">
         <link rel="stylesheet" href={join(__dirname, 'statistic.css')}/>
