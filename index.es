@@ -337,7 +337,7 @@ export const reactClass = connect(
     fetch('http://db.kcwiki.moe/drop/ship/'+ value[0] +'/'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json')
       .then(res => res.json())
       .then(function(response){
-        _this.setState({detail:response,sortFlag: 'rate',imgurl:''})
+        _this.setState({detail:response,sortFlag: 'rate',imgurl:'',nowmap: '',imgurl:''})
       });
   }
 
