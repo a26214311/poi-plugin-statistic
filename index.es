@@ -36,7 +36,9 @@ export const reactClass = connect(
       searchShipId: '',
       searchMapPoint: '',
       imgurl:'',
+      mappoints:{},
       savedurl:{},
+      defmaps:[],
       searchType: ''
     }
   }
@@ -193,6 +195,39 @@ export const reactClass = connect(
     }
   };
 
+
+  componentDidMount = () => {
+    this.getDefaultMaps();
+  };
+
+  getDefaultMaps(){
+    var url = "https://db.kcwiki.org/drop/";
+    var that = this;
+    fetch(url)
+      .then(function(res){
+        return res.text();
+      }).then(function(response) {
+        var n = response.indexOf("<div class='tab-pane active'");
+        var s1= response.substring(n);
+        var str = '/drop/map/';
+        var k=s1.indexOf(str);
+        var maps = [];
+        while(k>0){
+          var s = s1.substring(k+str.length);
+          var mapstr = s.substring(0,3);
+          if(parseInt(mapstr)>320){
+            s1=s1.substring(k+40);
+            k=s1.indexOf(str);
+            maps.push(Math.floor(parseInt(mapstr)/10)+"-"+parseInt(mapstr)%10);
+          }else{
+            k=-1;
+          }
+        }
+        that.setState({defmaps:maps});
+    });
+  }
+
+
   getMapByUri(uri) {
     this.setState({
       searchMapPoint: uri,
@@ -220,16 +255,33 @@ export const reactClass = connect(
           var n = url.lastIndexOf("SAB.html");
           var defaultPoint = url.substring(n-2,n-1);
           var imgurlnew = _this.getMapImgUrlFromHtml(response);
+          var points = _this.getPointsFromHtml(response);
+          var mappoints = _this.state.mappoints;
+          mappoints[mapid]=points;
           savedurl[mapid]={img:imgurlnew,point:defaultPoint};
           let uri = url.substring(url.indexOf('/map') + 5, url.indexOf('-SAB'));
           _this.setState(
-            {nowmap:mapid,imgurl:imgurlnew,detail:'',savedurl:savedurl,
+            {nowmap:mapid,imgurl:imgurlnew,detail:'',savedurl:savedurl,mappoints:mappoints,
               searchMapPoint:uri,searchType: 'map'},
             ()=>_this.get_statistic_info_by_map(uri)
           );
         });
     }
+  }
 
+  getPointsFromHtml(htmlstr){
+    var points = [];
+    var n1 = htmlstr.indexOf('战斗点');
+    var n2 = htmlstr.indexOf('评价');
+    var str = htmlstr.substring(n1,n2);
+    var k = str.indexOf(".html");
+    while(k>0){
+      var point = str.substring(k+7,k+8);
+      points.push(point);
+      str = str.substring(k+20);
+      k = str.indexOf(".html");
+    }
+    return points;
   }
 
   getMapImgUrlFromHtml(htmlstr){
@@ -320,32 +372,17 @@ export const reactClass = connect(
     this.setState({sortFlag: e.target.getAttribute('value')})
   }
 
-
-
   render_D() {
     const { $ships } = this.props;
     const $shipTypes = this.props.$shipTypes;
     const rankLevel = ['SAB', 'SA', 'S', 'A', 'B'];
     const allmaps = this.props.allmaps;
     let mapkeys = Object.keys(allmaps);
-    let fmapkey = [];
-    let bmapkey = [];
-    let maxmap = 30;
-    for(var p in allmaps){
-      if(parseInt(p)>maxmap){
-        maxmap=parseInt(p);
-      }
-    }
-    for(var p in allmaps){
-      if(parseInt(p)==maxmap){
-        fmapkey.push(p);
-      }else{
-        bmapkey.push(p);
-      }
-    }
-    mapkeys=fmapkey.concat(bmapkey);
+    let defmaps = this.state.defmaps;
+    mapkeys = defmaps.concat(mapkeys);
     const selectedmap = this.state.nowmap;
-    const mapdetail = selectedmap?allmaps[selectedmap]:{spots:{}};
+    const mappoints = this.state.mappoints;
+    let mapdetail = selectedmap?(mappoints[selectedmap]?mappoints[selectedmap]:(allmaps[selectedmap]?allmaps[selectedmap]:{spots:{}})):{spots:{}};
     const createList = arr => {
       let out = [];
       arr.map((option) => {
@@ -394,7 +431,7 @@ export const reactClass = connect(
           break;
       }
     }
-    let points = Object.keys(mapdetail.spots).sort(),
+    let points = mappoints[selectedmap]?mappoints[selectedmap]:Object.keys(mapdetail.spots).sort(),
     bossPoint = selectedmap && this.state.savedurl[selectedmap] ? this.state.savedurl[selectedmap].point : 'none';
     let nowpoint = this.state.searchMapPoint;
     let pointvalue;
