@@ -36,6 +36,7 @@ export const reactClass = connect(
       searchShipId: '',
       searchMapPoint: '',
       imgurl:'',
+      mapvalue:'0',
       mappoints:{},
       savedurl:{},
       defmaps:[],
@@ -189,9 +190,10 @@ export const reactClass = connect(
           });
       }
       */
+      this.setState({mapvalue: option});
       this.getMapImgUrl(option);
     } else {
-      this.setState({nowmap: ''})
+      this.setState({nowmap: '',mapvalue: option})
     }
   };
 
@@ -337,7 +339,7 @@ export const reactClass = connect(
     fetch('http://db.kcwiki.moe/drop/ship/'+ value[0] +'/'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json')
       .then(res => res.json())
       .then(function(response){
-        _this.setState({detail:response,sortFlag: 'rate',imgurl:'',nowmap: '',imgurl:''})
+        _this.setState({detail:response,sortFlag: 'rate',imgurl:'',nowmap: '',imgurl:'',mapvalue: '0'})
       });
   }
 
@@ -464,7 +466,7 @@ export const reactClass = connect(
         </Row>
         <Row>
           <Col xs={6}>
-            <FormControl componentClass="select" onChange={this.selectMap}>
+            <FormControl componentClass="select" onChange={this.selectMap} value={this.state.mapvalue}>
               <option value="0">请选择海域</option>
               {mapkeys.map(function(amap){
                 return(
