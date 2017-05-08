@@ -523,7 +523,11 @@ export const reactClass = connect(
         </Row>
         <div>
           {
-            this.state.imgurl != 'undefined' ? <img className="mapImg" src={this.state.imgurl} /> : <span></span>
+            this.state.imgurl != 'undefined' ?
+              this.state.imgurl.length>9?
+              <img className="mapImg" src={this.state.imgurl+"?math="+new Date().getDay()} />:<span></span>
+              :
+              <span></span>
           }
         </div>
         <Table striped bordered condensed hover>
