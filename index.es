@@ -287,7 +287,7 @@ export const reactClass = connect(
   }
 
   getMapImgUrlFromHtml(htmlstr){
-    var n = htmlstr.indexOf('https://upload.kcwiki.moe');
+    var n = htmlstr.indexOf('https://upload.kcwiki.');
     if(n + 1){
       var sub1 = htmlstr.substring(n);
       var n1 = sub1.indexOf('>');
