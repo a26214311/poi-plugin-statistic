@@ -1,6 +1,6 @@
 {
   "name": "poi-plugin-statistic",
-  "version": "0.6.4",
+  "version": "0.7.0",
   "main": "index.es",
   "description": "A plugin for notify locking ships",
   "author": {

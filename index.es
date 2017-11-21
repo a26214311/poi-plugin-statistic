@@ -255,7 +255,8 @@ export const reactClass = connect(
           return res.text();
         }).then(function(response){
           var n = url.lastIndexOf("SAB.html");
-          var defaultPoint = url.substring(n-2,n-1);
+          var nx = url.lastIndexOf("/");
+          var defaultPoint = url.substring(nx+1,n-1);
           var imgurlnew = _this.getMapImgUrlFromHtml(response);
           var points = _this.getPointsFromHtml(response);
           var mappoints = _this.state.mappoints;
@@ -278,7 +279,13 @@ export const reactClass = connect(
     var str = htmlstr.substring(n1,n2);
     var k = str.indexOf(".html");
     while(k>0){
-      var point = str.substring(k+7,k+8);
+      var str1 = str.substring(k);
+      var kx = str1.indexOf('<');
+      var point = str1.substring(7,kx);
+      var bx=point.indexOf('(');
+      if(bx>0){
+        point=point.substring(0,bx).trim();
+      }
       points.push(point);
       str = str.substring(k+20);
       k = str.indexOf(".html");
@@ -287,7 +294,14 @@ export const reactClass = connect(
   }
 
   getMapImgUrlFromHtml(htmlstr){
-    var n = htmlstr.indexOf('https://upload.kcwiki.');
+    var n1 = htmlstr.indexOf('https://upload.kcwiki.');
+    var n2 = htmlstr.indexOf('https://uploads.kcwiki.');
+    var n;
+    if(n2>0){
+      n=n2;
+    }else if(n1>0){
+      n=n1;
+    }
     if(n + 1){
       var sub1 = htmlstr.substring(n);
       var n1 = sub1.indexOf('>');
