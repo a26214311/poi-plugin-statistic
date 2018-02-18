@@ -242,7 +242,7 @@ export const reactClass = connect(
     var savedurl = this.state.savedurl;
     var imgObj = savedurl[mapid];
     if(imgObj){
-      let uri = `${mapid.replace(/\-/g, '')}/${parseInt(mapid) > 10 ? '3/' : ''}${savedurl[mapid].point}`;
+      let uri = `${mapid.replace(/\-/g, '')}/${parseInt(mapid) > 10 ? (parseInt(mapid) > 40?'4/':'3/') : ''}${savedurl[mapid].point}`;
       this.setState({nowmap:mapid,imgurl:imgObj.img,detail:'',searchMapPoint:uri,searchType: 'map'},
         ()=>this.get_statistic_info_by_map(uri));
     }else{
@@ -496,7 +496,16 @@ export const reactClass = connect(
               {
                 points.map((point) => {
                   if(!parseInt(point)){
-                    if(parseInt(selectedmap) > 10){
+                    if(parseInt(selectedmap) > 40){
+                      const hardlevel = ["甲", "乙", "丙" , "丁"];
+                      return hardlevel.map((level, index) =>
+                        <option value={[selectedmap, point, 4 - index]}>
+                          {point}
+                          {point == bossPoint ? '(Boss)' : ''}
+                          ({level})
+                        </option>
+                      )
+                    }else if(parseInt(selectedmap) > 10){
                       const hardlevel = ["甲", "乙", "丙"];
                       return hardlevel.map((level, index) =>
                         <option value={[selectedmap, point, 3 - index]}>
