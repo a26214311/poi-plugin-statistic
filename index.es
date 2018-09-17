@@ -281,7 +281,8 @@ export const reactClass = connect(
     while(k>0){
       var str1 = str.substring(k);
       var kx = str1.indexOf('<');
-      var point = str1.substring(7,kx);
+      var nx = str1.indexOf('>')
+      var point = str1.substring(nx+1,kx);
       var bx=point.indexOf('(');
       if(bx>0){
         point=point.substring(0,bx).trim();
@@ -325,6 +326,7 @@ export const reactClass = connect(
 
   render() {
     try {
+      console.log(3333)
       return this.render_D();
     } catch (e) {
       console.log(e);
