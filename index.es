@@ -246,7 +246,7 @@ export const reactClass = connect(
       this.setState({nowmap:mapid,imgurl:imgObj.img,detail:'',searchMapPoint:uri,searchType: 'map'},
         ()=>this.get_statistic_info_by_map(uri));
     }else{
-      var mapurl = "https://db.kcwiki.moe/drop/map/"+mapid.split("-").join('');
+      var mapurl = "https://db.kcwiki.cn/drop/map/"+mapid.split("-").join('');
       const _this=this;
       var url = '';
       fetch(mapurl)
@@ -294,14 +294,22 @@ export const reactClass = connect(
     return points;
   }
 
+
+  //https://uploadx.kcwiki.cn/commons/thumb/4/4c/MapHDE-5Summer2022.png/600px-MapHDE-5Summer2022.png
   getMapImgUrlFromHtml(htmlstr){
     var n1 = htmlstr.indexOf('https://upload.kcwiki.');
     var n2 = htmlstr.indexOf('https://uploads.kcwiki.');
+    var n3 = htmlstr.indexOf('https://kcwiki.kcyuri.com');
+    var n4 = htmlstr.indexOf('https://uploadx.kcwiki.');
     var n;
-    if(n2>0){
+    if(n3>0){
+        n=n3;
+    } else if(n2>0){
       n=n2;
     }else if(n1>0){
       n=n1;
+    }else if(n4>0){
+      n=n4;
     }
     if(n + 1){
       var sub1 = htmlstr.substring(n);
@@ -341,13 +349,25 @@ export const reactClass = connect(
   get_statistic_info_by_map(...value){
     this.setState({detail:{}});
     const _this = this;
-    fetch('http://db.kcwiki.moe/drop/map/'+ value[0] +'-'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json')
+    var old = value[0] +'-'+ (value.length - 1? value[1]: this.state.battle_rank);
+    var oa = old.split('/');
+    var url = 'http://db.kcwiki.moe/drop/map/'+ value[0] +'-'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json'
+    if(oa.length==3){
+      var o2 = oa[2];
+      var o2a = o2.split('-');
+      url = 'https://db.kcwiki.cn/api/cache/drop_map_' + oa[0] + '_'+o2a[0]+'-'+oa[1]+'-'+o2a[1];
+    }
+    //fetch('http://db.kcwiki.moe/drop/map/'+ value[0] +'-'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json')
+    fetch(url)
       .then(res => res.json())
       .then(function(response){
         _this.setState({detail:response,sortFlag: 'name'})
       });
   }
 
+
+  //   https://db.kcwiki.cn/api/cache/drop_map_552_V-4-S
+  //   https://db.kcwiki.cn/drop/map/552/4/V-SAB.json
 
   get_statistic_info(...value){
     this.setState({detail:{}});
