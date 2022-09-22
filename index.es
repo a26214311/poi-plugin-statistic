@@ -369,10 +369,19 @@ export const reactClass = connect(
   //   https://db.kcwiki.cn/api/cache/drop_map_552_V-4-S
   //   https://db.kcwiki.cn/drop/map/552/4/V-SAB.json
 
+  //https://db.kcwiki.cn/api/cache/drop_ship_79-S
+
   get_statistic_info(...value){
     this.setState({detail:{}});
     const _this = this;
-    fetch('http://db.kcwiki.moe/drop/ship/'+ value[0] +'/'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json')
+    var old = value[0] +'/'+ (value.length - 1? value[1]: this.state.battle_rank);
+    var oa = old.split('/');
+    var url = 'http://db.kcwiki.moe/drop/ship/'+ value[0] +'/'+ (value.length - 1? value[1]: this.state.battle_rank) +'.json'
+    if(oa.length==2){
+      url = 'https://db.kcwiki.cn/api/cache/drop_ship_' + oa[0]+'-'+oa[1];
+    }
+
+    fetch(url)
       .then(res => res.json())
       .then(function(response){
         _this.setState({detail:response,sortFlag: 'rate',imgurl:'',nowmap: '',imgurl:'',mapvalue: '0'})
